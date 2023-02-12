@@ -49,7 +49,8 @@ public class BrewCoffeeTests
         var expectedResponse = new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
 
         var coffeeController = new CoffeeController(mockLogger.Object);
-        for(int i = 0; i < 4; i++) 
+        Counter.ResetCount();
+        for (int i = 0; i < 4; i++) 
         {
             coffeeController.BrewCoffee();
         }

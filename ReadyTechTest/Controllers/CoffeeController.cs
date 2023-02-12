@@ -9,8 +9,6 @@ namespace ReadyTechTest.API.Controllers;
 public class CoffeeController : ControllerBase
 {
     private readonly ILogger<CoffeeController> _logger;
-    //would store it in a db if it needs to be persisted, something like redis 
-    private int count = 0;
     //would configure in appsettings if likely to change
     private const int maxCount = 5;
 
@@ -37,10 +35,10 @@ public class CoffeeController : ControllerBase
             return new StatusCodeResult(StatusCodes.Status418ImATeapot);
         }
 
-        count++;
+        var count = Counter.IncrementCount();
         if (count == maxCount)
         {
-            count = 0;
+            Counter.ResetCount();
             return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
         }
 
