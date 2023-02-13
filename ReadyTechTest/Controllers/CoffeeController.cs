@@ -48,8 +48,7 @@ public class CoffeeController : ControllerBase
             return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
         }
 
-        //generally put this in as a user secret
-        //would set these up as a appsetting
+        //would set these up as a appsetting usually
         var lat = "-37.81";
         var lon = "144.96";
         var currentTemp = await _weatherService.GetWeatherByLocationAsync(lat, lon);

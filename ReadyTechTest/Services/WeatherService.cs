@@ -5,6 +5,7 @@ namespace ReadyTechTest.API.Services
     public class WeatherService : IWeatherService
     {
         private readonly HttpClient _httpClient;
+        //generally put this in as a user secret
         private readonly string apiKey = "a0de4d9ee194eb716c8e52c5046952af";
         public WeatherService(IHttpClientFactory httpClientFactory)
         {
