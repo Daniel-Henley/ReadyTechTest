@@ -4,6 +4,7 @@ using ReadyTechTest.API.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger;
+using ReadyTechTest.API.Services;
 
 namespace ReadyTechTest.API.Controllers;
 
@@ -11,13 +12,15 @@ namespace ReadyTechTest.API.Controllers;
 public class CoffeeController : ControllerBase
 {
     private readonly ILogger<CoffeeController> _logger;
+    private readonly IWeatherService _weatherService;    
+
     //would configure in appsettings if likely to change
     private const int maxCount = 5;
 
-    public CoffeeController(ILogger<CoffeeController> logger, HttpClient httpClient)
+    public CoffeeController(ILogger<CoffeeController> logger, IWeatherService weatherService)
     {
         _logger = logger;
-        _httpClient = httpClient;
+        _weatherService = weatherService;
     }
 
     [SwaggerResponse(StatusCodes.Status200OK,
@@ -46,21 +49,13 @@ public class CoffeeController : ControllerBase
         }
 
         //generally put this in as a user secret
-        var apiKey = "a0de4d9ee194eb716c8e52c5046952af";
         //would set these up as a appsetting
-        var lat = -37.81;
-        var lon = 144.96;
+        var lat = "-37.81";
+        var lon = "144.96";
+        var currentTemp = await _weatherService.GetWeatherByLocationAsync(lat, lon);
 
-        var queryString = $"weather?lat={lat}&lon={lon}&appid={apiKey}&units=metric";
-
-        _httpClient.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
-        var weatherResponse = await _httpClient.GetStringAsync(queryString);
-
-        //for most cases i'd use non anonymous objects but we only need 1 field from the response
-        dynamic weather = JsonConvert.DeserializeObject(weatherResponse);
-        float currentTemp = weather.main.temp;
         var response = currentTemp > 30f ? new CoffeeResponse(Constants.IcedCoffeeResponseText, date)
-                                        : new CoffeeResponse(Constants.CoffeeResponseText, date);
+                                         : new CoffeeResponse(Constants.CoffeeResponseText, date);
 
         return response;
     }
